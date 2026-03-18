@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import Departments from "@/components/Departments";
@@ -9,15 +10,24 @@ import Footer from "@/components/Footer";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
 
 const Index = () => {
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add("visible"); }),
+      { threshold: 0.15 }
+    );
+    document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <div className="min-h-screen">
       <Header />
       <Hero />
-      <Departments />
-      <BrandsCarousel />
-      <Features />
-      <About />
-      <Contact />
+      <div className="reveal"><Departments /></div>
+      <div className="reveal"><BrandsCarousel /></div>
+      <div className="reveal"><Features /></div>
+      <div className="reveal"><About /></div>
+      <div className="reveal"><Contact /></div>
       <Footer />
       <WhatsAppFloat />
     </div>

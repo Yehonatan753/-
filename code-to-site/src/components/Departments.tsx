@@ -1,4 +1,8 @@
 import { useState } from "react";
+import {
+  Dog, Cat, Bird, Fish, Waves,
+  ShoppingCart, BookOpen, MessageCircle, Filter, Sprout, Cog, Wrench, Anchor,
+} from "lucide-react";
 
 import {
   U, ASUBS, AP, NC, NP, AQ_FISH, AQ_EQUIP, AQ_PRODUCTS,
@@ -16,6 +20,23 @@ const FILTER_LABELS: Record<string, string> = {
   season: 'עונת פריחה',
   water: 'דרישות השקייה',
   light: 'תנאי תאורה',
+};
+
+type LucideIcon = typeof Dog;
+
+const ANIMAL_ICON_MAP: Record<string, LucideIcon | undefined> = {
+  dogs: Dog,
+  cats: Cat,
+  birds: Bird,
+  // rodents & reptiles: no suitable Lucide icon → keep image-only
+};
+
+const FISHING_ICON_MAP: Record<string, LucideIcon | undefined> = {
+  rods: Waves,
+  reels: Cog,
+  lines: Waves,
+  'hooks-lures': Anchor,
+  accessories: Wrench,
 };
 
 const Departments = () => {
@@ -96,29 +117,35 @@ const Departments = () => {
         {view === "animals" && (
           <div>
             <BackButton onClick={goMain} label="חזרה למחלקות" />
-            <h3 className="text-2xl font-bold text-primary-dark text-center mb-6 font-rubik">בעלי חיים — בחרו מחלקה</h3>
+            <h3 className="text-2xl font-bold text-primary-dark text-center mb-2 font-rubik">בעלי חיים — בחרו מחלקה</h3>
+            <div className="w-10 h-[3px] bg-primary rounded-full mx-auto mb-6" />
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {ASUBS.map((s) => (
-                <div
-                  key={s.id}
-                  className="relative rounded-lg overflow-hidden cursor-pointer aspect-square group hover:-translate-y-1 hover:shadow-elevated transition-all duration-300"
-                  onClick={() => { setSubId(s.id); setView("animal-sub-choice"); setBrandFilter(""); setCatFilter(""); }}
-                >
-                  <img src={s.img} alt={s.name} className="w-full h-full object-cover transition-transform duration-400 group-hover:scale-110" />
-                  <div className="absolute inset-0 opacity-55" style={{ background: s.color }} />
-                  <div className="absolute inset-0 flex flex-col items-center justify-center text-center z-10">
-                    <span className="font-rubik text-xl font-bold text-primary-foreground drop-shadow-lg">{s.name}</span>
-                    <span className="text-sm text-primary-foreground/90 mt-1">{AP[s.id].p.length} מוצרים</span>
+              {ASUBS.map((s) => {
+                const AnimalIcon = ANIMAL_ICON_MAP[s.id];
+                return (
+                  <div
+                    key={s.id}
+                    className="relative rounded-lg overflow-hidden cursor-pointer aspect-square group hover:-translate-y-1 hover:shadow-elevated transition-all duration-300"
+                    onClick={() => { setSubId(s.id); setView("animal-sub-choice"); setBrandFilter(""); setCatFilter(""); }}
+                  >
+                    <img src={s.img} alt={s.name} className="w-full h-full object-cover transition-transform duration-400 group-hover:scale-110" />
+                    <div className="absolute inset-0 opacity-55" style={{ background: s.color }} />
+                    <div className="absolute inset-0 flex flex-col items-center justify-center text-center z-10">
+                      {AnimalIcon && <AnimalIcon size={28} className="text-white drop-shadow-lg mx-auto mb-1" />}
+                      <span className="font-rubik text-xl font-bold text-primary-foreground drop-shadow-lg">{s.name}</span>
+                      <span className="text-sm text-primary-foreground/90 mt-1">{AP[s.id].p.length} מוצרים</span>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             {/* Professional articles section for animals */}
             <Separator className="my-10" />
             <div className="mb-6 text-center">
               <p className="text-primary font-semibold text-sm tracking-wider mb-1">מידע שימושי</p>
-              <h4 className="text-2xl font-bold font-rubik text-primary-dark">דפי מידע לגידול נכון</h4>
+              <h4 className="text-2xl font-bold font-rubik text-primary-dark mb-2">דפי מידע לגידול נכון</h4>
+              <div className="w-10 h-[3px] bg-primary rounded-full mx-auto" />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
               {ANIMAL_ARTICLES.map((article) => (
@@ -138,7 +165,7 @@ const Departments = () => {
                   <div className="p-4 flex flex-col flex-1">
                     <h5 className="font-rubik font-bold text-primary-dark mb-1.5 leading-snug">{article.title}</h5>
                     <p className="text-sm text-muted-foreground flex-1 leading-relaxed">{article.desc}</p>
-                    <span className="mt-3 text-sm font-semibold text-primary group-hover:underline inline-flex items-center gap-1">
+                    <span className="mt-3 text-sm font-semibold text-primary inline-flex items-center gap-1 relative after:absolute after:bottom-0 after:right-0 after:h-[2px] after:w-0 after:bg-primary after:transition-all after:duration-300 group-hover:after:w-full">
                       קרא עוד ←
                     </span>
                   </div>
@@ -152,15 +179,16 @@ const Departments = () => {
         {view === "animal-sub-choice" && (
           <div>
             <BackButton onClick={() => setView("animals")} label="חזרה לבעלי חיים" />
-            <h3 className="text-2xl font-bold text-primary-dark text-center mb-8 font-rubik">
+            <h3 className="text-2xl font-bold text-primary-dark text-center mb-2 font-rubik">
               {ASUBS.find((s) => s.id === subId)?.name}
             </h3>
+            <div className="w-10 h-[3px] bg-primary rounded-full mx-auto mb-8" />
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-lg mx-auto">
               <div
                 className="bg-card rounded-xl border-2 border-primary/20 hover:border-primary cursor-pointer p-8 text-center hover:-translate-y-1 hover:shadow-elevated transition-all duration-300 group"
                 onClick={() => setView("animal-sub")}
               >
-                <span className="text-5xl mb-4 block">🛒</span>
+                <ShoppingCart size={40} className="text-primary mx-auto mb-4" />
                 <h4 className="font-rubik font-bold text-primary-dark text-xl mb-2">מוצרים</h4>
                 <p className="text-sm text-muted-foreground">מזון, ציוד טיפוח, צעצועים ועוד</p>
                 <span className="mt-3 text-xs font-semibold text-primary inline-block">{AP[subId]?.p.length || 0} מוצרים ←</span>
@@ -169,7 +197,7 @@ const Departments = () => {
                 className="bg-card rounded-xl border-2 border-primary/20 hover:border-primary cursor-pointer p-8 text-center hover:-translate-y-1 hover:shadow-elevated transition-all duration-300 group"
                 onClick={() => setView("animal-sub-guides")}
               >
-                <span className="text-5xl mb-4 block">📖</span>
+                <BookOpen size={40} className="text-primary mx-auto mb-4" />
                 <h4 className="font-rubik font-bold text-primary-dark text-xl mb-2">מדריכים</h4>
                 <p className="text-sm text-muted-foreground">דפי מידע, טיפים וטיפול נכון</p>
                 <span className="mt-3 text-xs font-semibold text-primary inline-block">{(ANIMAL_SUB_ARTICLES[subId] || []).length} מדריכים ←</span>
@@ -182,9 +210,10 @@ const Departments = () => {
         {view === "animal-sub" && (
           <div>
             <BackButton onClick={() => setView("animal-sub-choice")} label={`חזרה ל${ASUBS.find((s) => s.id === subId)?.name || ''}`} />
-            <h3 className="text-2xl font-bold text-primary-dark text-center mb-6 font-rubik">
+            <h3 className="text-2xl font-bold text-primary-dark text-center mb-2 font-rubik">
               {ASUBS.find((s) => s.id === subId)?.name} — מוצרים
             </h3>
+            <div className="w-10 h-[3px] bg-primary rounded-full mx-auto mb-6" />
             <FilterBar
               brands={AP[subId]?.f.b || []}
               categories={AP[subId]?.f.c || []}
@@ -205,9 +234,10 @@ const Departments = () => {
         {view === "animal-sub-guides" && (
           <div>
             <BackButton onClick={() => setView("animal-sub-choice")} label={`חזרה ל${ASUBS.find((s) => s.id === subId)?.name || ''}`} />
-            <h3 className="text-2xl font-bold text-primary-dark text-center mb-6 font-rubik">
+            <h3 className="text-2xl font-bold text-primary-dark text-center mb-2 font-rubik">
               {ASUBS.find((s) => s.id === subId)?.name} — מדריכים
             </h3>
+            <div className="w-10 h-[3px] bg-primary rounded-full mx-auto mb-6" />
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
               {(ANIMAL_SUB_ARTICLES[subId] || []).map((article) => (
                 <div
@@ -221,7 +251,7 @@ const Departments = () => {
                   <div className="p-4 flex flex-col flex-1">
                     <h5 className="font-rubik font-bold text-primary-dark mb-1.5 leading-snug">{article.title}</h5>
                     <p className="text-sm text-muted-foreground flex-1 leading-relaxed">{article.desc}</p>
-                    <span className="mt-3 text-sm font-semibold text-primary group-hover:underline inline-flex items-center gap-1">
+                    <span className="mt-3 text-sm font-semibold text-primary inline-flex items-center gap-1 relative after:absolute after:bottom-0 after:right-0 after:h-[2px] after:w-0 after:bg-primary after:transition-all after:duration-300 group-hover:after:w-full">
                       קרא עוד ←
                     </span>
                   </div>
@@ -269,7 +299,7 @@ const Departments = () => {
                   <div className="p-4">
                     <h4 className="font-rubik font-bold text-primary-dark">{cat.name}</h4>
                     <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{cat.d}</p>
-                    <span className="inline-flex items-center gap-1 mt-3 text-primary font-semibold text-sm group-hover:gap-2 transition-all">
+                    <span className="inline-flex items-center gap-1 mt-3 text-primary font-semibold text-sm group-hover:gap-2 transition-all relative after:absolute after:bottom-0 after:right-0 after:h-[2px] after:w-0 after:bg-primary after:transition-all after:duration-300 group-hover:after:w-full">
                       צפו בקטלוג ←
                     </span>
                   </div>
@@ -281,7 +311,8 @@ const Departments = () => {
             <Separator className="mb-10" />
             <div className="mb-4">
               <p className="text-primary font-semibold text-sm tracking-wider mb-1">מידע מקצועי</p>
-              <h4 className="text-2xl font-bold font-rubik text-primary-dark">מדריכי גינון מהשדה</h4>
+              <h4 className="text-2xl font-bold font-rubik text-primary-dark mb-2">מדריכי גינון מהשדה</h4>
+              <div className="w-10 h-[3px] bg-primary rounded-full" />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
               {NURSERY_ARTICLES.map((article) => (
@@ -302,7 +333,7 @@ const Departments = () => {
                   <div className="p-4 flex flex-col flex-1">
                     <h5 className="font-rubik font-bold text-primary-dark mb-1.5 leading-snug">{article.title}</h5>
                     <p className="text-sm text-muted-foreground flex-1 leading-relaxed">{article.desc}</p>
-                    <span className="mt-3 text-sm font-semibold text-primary group-hover:underline inline-flex items-center gap-1">
+                    <span className="mt-3 text-sm font-semibold text-primary inline-flex items-center gap-1 relative after:absolute after:bottom-0 after:right-0 after:h-[2px] after:w-0 after:bg-primary after:transition-all after:duration-300 group-hover:after:w-full">
                       קרא עוד ←
                     </span>
                   </div>
@@ -328,7 +359,7 @@ const Departments = () => {
               className="md:hidden mb-4 inline-flex items-center gap-2 px-4 py-2 rounded-full border-2 border-primary text-primary text-sm font-semibold"
               onClick={() => setShowFilters(!showFilters)}
             >
-              🔍 {showFilters ? 'הסתר פילטרים' : 'הצג פילטרים'}
+              <Filter size={14} className="inline ml-1" /> {showFilters ? 'הסתר פילטרים' : 'הצג פילטרים'}
             </button>
 
             <div className="flex gap-6 items-start">
@@ -359,7 +390,7 @@ const Departments = () => {
               <div className="flex-1 min-w-0">
                 {(NP[subId] || []).length === 0 ? (
                   <div className="text-center py-16 text-muted-foreground">
-                    <p className="text-4xl mb-3">🌱</p>
+                    <Sprout size={40} className="mb-3 mx-auto text-muted-foreground" />
                     <p className="font-semibold">אין מוצרים בקטגוריה זו עדיין</p>
                   </div>
                 ) : (
@@ -445,7 +476,8 @@ const Departments = () => {
             <Separator className="my-10 bg-blue/20" />
             <div className="mb-6 text-center">
               <p className="text-blue font-semibold text-sm tracking-wider mb-1">מידע שימושי</p>
-              <h4 className="text-2xl font-bold font-rubik text-blue-dark">מדריכי אקווריומים למתחילים</h4>
+              <h4 className="text-2xl font-bold font-rubik text-blue-dark mb-2">מדריכי אקווריומים למתחילים</h4>
+              <div className="w-10 h-[3px] bg-blue rounded-full mx-auto" />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
               {AQUA_ARTICLES.map((article) => (
@@ -465,7 +497,7 @@ const Departments = () => {
                   <div className="p-4 flex flex-col flex-1">
                     <h5 className="font-rubik font-bold text-blue-dark mb-1.5 leading-snug">{article.title}</h5>
                     <p className="text-sm text-muted-foreground flex-1 leading-relaxed">{article.desc}</p>
-                    <span className="mt-3 text-sm font-semibold text-blue group-hover:underline inline-flex items-center gap-1">
+                    <span className="mt-3 text-sm font-semibold text-blue inline-flex items-center gap-1 relative after:absolute after:bottom-0 after:right-0 after:h-[2px] after:w-0 after:bg-blue after:transition-all after:duration-300 group-hover:after:w-full">
                       קרא עוד ←
                     </span>
                   </div>
@@ -546,7 +578,7 @@ const Departments = () => {
 
             {/* Hero */}
             <div className="text-center mb-10 pt-2">
-              <p className="text-sky-400 font-semibold text-sm tracking-wider mb-1.5">🐟 מחלקת הדייג</p>
+              <p className="text-sky-400 font-semibold text-sm tracking-wider mb-1.5 inline-flex items-center gap-1.5"><Fish size={15} />מחלקת הדייג</p>
               <h3 className="text-3xl font-extrabold font-rubik text-white mb-3">ציוד דייג בסיסי ומקצועי</h3>
               <p className="text-slate-300 max-w-[560px] mx-auto text-base leading-relaxed">
                 כל מה שצריך כדי לצאת לדוג — חכות, גלילים, חוטים, קרסים, פתיונות ואביזרים.
@@ -556,27 +588,34 @@ const Departments = () => {
 
             {/* Category grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-12">
-              {FISHING_CATS.map((cat) => (
-                <div
-                  key={cat.id}
-                  className="rounded-xl overflow-hidden cursor-pointer group hover:-translate-y-1 hover:shadow-elevated transition-all duration-300 bg-slate-800/60 border border-sky-500/20 hover:border-sky-400/60 backdrop-blur-sm"
-                  onClick={() => { setSubId(cat.id); setView("fishing-sub"); setBrandFilter(""); setCatFilter(""); }}
-                >
-                  <div className="p-6 text-center">
-                    <span className="text-4xl mb-3 block">{cat.icon}</span>
-                    <h4 className="font-rubik font-bold text-white text-lg mb-1">{cat.name}</h4>
-                    <p className="text-sm text-slate-300">{cat.d}</p>
-                    <span className="mt-3 text-xs font-semibold text-sky-400 inline-block">{FP[cat.id]?.length || 0} מוצרים ←</span>
+              {FISHING_CATS.map((cat) => {
+                const FishIcon = FISHING_ICON_MAP[cat.id];
+                return (
+                  <div
+                    key={cat.id}
+                    className="rounded-xl overflow-hidden cursor-pointer group hover:-translate-y-1 hover:shadow-elevated transition-all duration-300 bg-slate-800/60 border border-sky-500/20 hover:border-sky-400/60 backdrop-blur-sm"
+                    onClick={() => { setSubId(cat.id); setView("fishing-sub"); setBrandFilter(""); setCatFilter(""); }}
+                  >
+                    <div className="p-6 text-center">
+                      {FishIcon
+                        ? <FishIcon size={36} className="text-sky-400 mx-auto mb-3" />
+                        : <span className="text-4xl mb-3 block">{cat.icon}</span>
+                      }
+                      <h4 className="font-rubik font-bold text-white text-lg mb-1">{cat.name}</h4>
+                      <p className="text-sm text-slate-300">{cat.d}</p>
+                      <span className="mt-3 text-xs font-semibold text-sky-400 inline-block">{FP[cat.id]?.length || 0} מוצרים ←</span>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             {/* Fishing articles */}
             <Separator className="my-10 bg-slate-700" />
             <div className="mb-6 text-center">
-              <p className="text-sky-400 font-semibold text-sm tracking-wider mb-1">📖 מידע שימושי</p>
-              <h4 className="text-2xl font-bold font-rubik text-white">מדריכי דייג</h4>
+              <p className="text-sky-400 font-semibold text-sm tracking-wider mb-1 inline-flex items-center gap-1.5"><BookOpen size={14} />מידע שימושי</p>
+              <h4 className="text-2xl font-bold font-rubik text-white mb-2">מדריכי דייג</h4>
+              <div className="w-10 h-[3px] bg-sky-400 rounded-full mx-auto" />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
               {FISHING_ARTICLES.map((article) => (
@@ -591,7 +630,7 @@ const Departments = () => {
                   <div className="p-4 flex flex-col flex-1">
                     <h5 className="font-rubik font-bold text-white mb-1.5 leading-snug">{article.title}</h5>
                     <p className="text-sm text-slate-300 flex-1 leading-relaxed">{article.desc}</p>
-                    <span className="mt-3 text-sm font-semibold text-sky-400 group-hover:underline inline-flex items-center gap-1">
+                    <span className="mt-3 text-sm font-semibold text-sky-400 inline-flex items-center gap-1 relative after:absolute after:bottom-0 after:right-0 after:h-[2px] after:w-0 after:bg-sky-400 after:transition-all after:duration-300 group-hover:after:w-full">
                       קרא עוד ←
                     </span>
                   </div>
@@ -605,8 +644,9 @@ const Departments = () => {
         {view === "fishing-sub" && (
           <div className="bg-gradient-to-b from-[#0c1929] to-[#1a2d47] rounded-2xl p-6 md:p-10 -mx-2">
             <BackButton onClick={() => setView("fishing")} label="חזרה לציוד דייג" />
-            <h3 className="text-2xl font-bold text-white text-center mb-6 font-rubik">
-              {FISHING_CATS.find((c) => c.id === subId)?.icon} {FISHING_CATS.find((c) => c.id === subId)?.name}
+            <h3 className="text-2xl font-bold text-white text-center mb-6 font-rubik flex items-center justify-center gap-2">
+              {(() => { const I = FISHING_ICON_MAP[subId]; return I ? <I size={22} className="text-sky-400" /> : FISHING_CATS.find((c) => c.id === subId)?.icon; })()}
+              {FISHING_CATS.find((c) => c.id === subId)?.name}
             </h3>
             <FilterBar
               brands={FISHING_BRANDS}
@@ -648,11 +688,14 @@ const BackButton = ({
   isNursery?: boolean;
 }) => (
   <button
-    className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-card border-2 font-semibold cursor-pointer transition-all mb-6 text-sm
+    className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-card border-2 font-semibold cursor-pointer transition-all mb-6 text-sm group
       border-primary text-primary hover:bg-primary hover:text-primary-foreground`}
     onClick={onClick}
   >
-    ← {label}
+    ←{" "}
+    <span className="relative after:absolute after:bottom-0 after:right-0 after:h-[2px] after:w-0 after:bg-primary after:transition-all after:duration-300 group-hover:after:w-full group-hover:after:bg-primary-foreground">
+      {label}
+    </span>
   </button>
 );
 
@@ -715,7 +758,7 @@ const ProductCard = ({
   const fallbackImg = isNursery ? U.nursery : isFishing ? U.fishing : isAqua ? U.aqua : U.animals;
   return (
     <div
-      className={`bg-card rounded-lg overflow-hidden border cursor-pointer hover:-translate-y-1 hover:shadow-soft transition-all duration-300 group flex flex-col
+      className={`bg-card rounded-lg overflow-hidden border cursor-pointer transition-all duration-200 hover:-translate-y-1 hover:shadow-xl group flex flex-col
       ${isNursery ? 'border-primary/15 hover:border-primary/40' : isAqua ? 'border-blue/10 hover:border-blue/40' : 'hover:border-primary-light'}`}
       onClick={onClick}
     >
@@ -754,7 +797,7 @@ const ProductCard = ({
           className="mt-auto pt-3 text-xs font-semibold text-whatsapp hover:underline inline-flex items-center gap-1"
           onClick={(e) => e.stopPropagation()}
         >
-          💬 לפרטים בוואטסאפ
+          <MessageCircle size={12} /> לפרטים בוואטסאפ
         </a>
       </div>
     </div>

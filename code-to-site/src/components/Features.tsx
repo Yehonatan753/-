@@ -1,3 +1,4 @@
+import { useRef, useEffect } from "react";
 import { Clock, Truck, Home, Heart } from "lucide-react";
 
 const features = [
@@ -8,15 +9,34 @@ const features = [
 ];
 
 const Features = () => {
+  const gridRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          const cards = gridRef.current?.querySelectorAll(".feature-card");
+          cards?.forEach((card, i) => {
+            setTimeout(() => card.classList.add("visible"), i * 80);
+          });
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.15 }
+    );
+    if (gridRef.current) observer.observe(gridRef.current);
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <section className="py-16 px-6 bg-bg-warm">
       <div className="max-w-[1200px] mx-auto">
         <p className="text-center text-primary font-semibold text-sm tracking-wider mb-1.5">למה דווקא אנחנו</p>
         <h2 className="text-center text-3xl font-bold text-primary-dark mb-2 font-rubik">הסיבות לבחור בחי והצומח</h2>
         <div className="w-14 h-[3px] bg-gradient-to-l from-primary to-secondary rounded-full mx-auto mb-10" />
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 max-w-[1000px] mx-auto">
+        <div ref={gridRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 max-w-[1000px] mx-auto">
           {features.map((f) => (
-            <div key={f.title} className="bg-card rounded-lg p-7 text-center border border-border/30 hover:-translate-y-1 hover:shadow-soft transition-all">
+            <div key={f.title} className="feature-card reveal bg-card rounded-lg p-7 text-center border border-border/30 hover:-translate-y-1 hover:shadow-soft transition-all">
               <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-3.5 bg-primary/10">
                 <f.icon className="text-primary" size={28} />
               </div>

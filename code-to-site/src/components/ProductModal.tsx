@@ -32,11 +32,11 @@ const ProductModal = ({ product, onClose }: ProductModalProps) => {
           ✕
         </button>
         {product.img && (
-          <div className="w-full aspect-[16/9] overflow-hidden rounded-t-xl bg-muted">
+          <div className="w-full min-h-[280px] max-h-[460px] overflow-hidden rounded-t-xl bg-gray-50 flex items-center justify-center">
             <img
               src={product.img}
               alt={product.n}
-              className="w-full h-full object-cover"
+              className="max-w-full max-h-[460px] object-contain"
               loading="lazy"
             />
           </div>

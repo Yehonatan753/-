@@ -16,15 +16,15 @@ const Hero = () => {
         }}
       />
       <div className="relative z-10 max-w-[1200px] mx-auto px-10 w-full text-right">
-        <h1 className="text-4xl md:text-6xl font-black text-primary-foreground leading-tight mb-4 drop-shadow-lg font-rubik">
+        <h1 className="animate-fade-in-up-1 text-4xl md:text-6xl font-black text-primary-foreground leading-tight mb-4 drop-shadow-lg font-rubik">
           הכל לחיה שלך.
           <br />
           הכל לגינה שלך.
         </h1>
-        <p className="text-lg text-primary-foreground/90 mb-6 max-w-[500px] leading-relaxed">
+        <p className="animate-fade-in-up-2 text-lg text-primary-foreground/90 mb-6 max-w-[500px] leading-relaxed">
           חנות חיות ומשתלה בדימונה - מזון פרמיום, צמחים, דגי נוי וציוד מקצועי. מעל 35 שנות ניסיון ושירות אישי.
         </p>
-        <div className="flex gap-3 flex-wrap">
+        <div className="animate-fade-in-up-3 flex gap-3 flex-wrap">
           <a
             href="https://wa.me/97286556681"
             target="_blank"
